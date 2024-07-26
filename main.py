@@ -1,12 +1,6 @@
 import string
 from collections import Counter
 import matplotlib.pyplot as plt
-text = open('read.txt', encoding = "utf-8").read()
-lower_case = text.lower()
-cleaned_text = lower_case.translate(str.maketrans('','',string.punctuation))
-
-tokenized_words = cleaned_text.split()
-print(tokenized_words)
 
 stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
               "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
@@ -19,25 +13,42 @@ stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you"
               "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than",
               "too", "very", "s", "t", "can", "will", "just", "done", "should", "now"]
 
-final_words = []
-for word in tokenized_words:
-    if word not in stop_words:
-        final_words.append(word)
 
-emotion_list = []
-with open('emotions.txt', 'r') as file:
-    for line in file:
-        clear_line = line.replace("\n", '').replace(",", '').replace("'", '').strip()
-        word, emotion = clear_line.split(':')
 
-        if word in final_words:
-            emotion_list.append(emotion)
 
-print(emotion_list)
-w = Counter(emotion_list)
-print(w)
+def tokens(cleaned_text):
+    final_words = []
+    tokenized_words = cleaned_text.split()
+    print(tokenized_words)
+    for word in tokenized_words:
+        if word not in stop_words:
+            final_words.append(word)
+    return emotion(final_words)
 
-fig, ax1 = plt.subplots()
-ax1.bar(w.keys(), w.values())
-plt.savefig('graph.png')
-plt.show()
+def emotion(final_words):
+    
+    emotion_list = []
+    with open('emotions.txt', 'r') as file:
+        for line in file:
+            clear_line = line.replace("\n", '').replace(",", '').replace("'", '').strip()
+            word, emotion = clear_line.split(':')
+
+            if word in final_words:
+                emotion_list.append(emotion)
+
+    print(emotion_list)
+    w = Counter(emotion_list)
+    print(w)
+    return graph(w)
+
+def graph(w):
+    fig, ax1 = plt.subplots()
+    ax1.bar(w.keys(), w.values())
+    plt.savefig('graph.png')
+    plt.show()
+
+text = open('read.txt', encoding = "utf-8").read()
+lower_case = text.lower()
+cleaned_text = lower_case.translate(str.maketrans('','',string.punctuation))
+tokens(cleaned_text)
+
